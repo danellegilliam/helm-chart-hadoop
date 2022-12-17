@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: zk2
+  name: zk2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zk2
+  template:
+    metadata:
+      labels:
+        app: zk2
+    spec:
+      containers:
+      - image: zookeeper
+        name: zk2
+        env:
+        - name: ZOO_MY_ID
+          value: "2"
+        - name: ZOO_SERVERS
+          value: "server.1=zk1.zk.svc.cluster.local:2888:3888;2181 server.2=0.0.0.0:2888:3888;2181 server.3=zk3.zk.svc.cluster.local:2888:3888;2181"
+        - name: ZOO_CFG_EXTRA
+          value: "zookeeper.electionPortBindRetry=20"
+        ports:
+        - containerPort: 2181
+        - containerPort: 2888
+        - containerPort: 3888
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1024Mi"
+            cpu: "1000m"
